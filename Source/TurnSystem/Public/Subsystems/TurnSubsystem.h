@@ -65,6 +65,9 @@ class TURNSYSTEM_API UTurnSubsystem : public UWorldSubsystem
 	void RemoveDestroyedControllers();
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
+	void ClearControllers();
+
+	UFUNCTION(BlueprintCallable,Category = "Turn System")
 	void StartTurn();
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")

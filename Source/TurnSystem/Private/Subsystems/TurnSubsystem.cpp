@@ -6,17 +6,15 @@
 
 UTurnSubsystem::UTurnSubsystem()
 {
-	
 }
 
 void UTurnSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	
 }
 
 void UTurnSubsystem::Deinitialize()
 {
-	
+	ClearControllers();
 }
 
 TArray<AController*> UTurnSubsystem::GetControllers() const
@@ -43,13 +41,19 @@ void UTurnSubsystem::AddController(AController* Controller)
 void UTurnSubsystem::RemoveController(AController* Controller)
 {
 	Controllers.RemoveSingle(Controller);
-	OnControllerRemoved.Broadcast(nullptr);
+	OnControllerRemoved.Broadcast(Controller);
 }
 
 void UTurnSubsystem::RemoveDestroyedControllers()
 {
 	Controllers.Remove(nullptr);
 	OnControllerRemoved.Broadcast(nullptr);
+}
+
+void UTurnSubsystem::ClearControllers()
+{
+	Index = 0;
+	Controllers.Empty();
 }
 
 void UTurnSubsystem::StartTurn()
