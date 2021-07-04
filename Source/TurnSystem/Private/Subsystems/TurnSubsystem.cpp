@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Subsystems/TurnSubsystem.h"
-#include "TurnSystemLog.h"
+#include "LogTurnSystem.h"
 #include "Interfaces/TurnInterfaces.h"
 
 UTurnSubsystem::UTurnSubsystem()
@@ -35,19 +35,19 @@ AController* UTurnSubsystem::GetActiveController()
 void UTurnSubsystem::AddController(AController* Controller)
 {
 	Controllers.Add(Controller);
-	OnControllerAdded.Broadcast(Controller);
+	OnControllerAdded.IsBound() ? OnControllerAdded.Broadcast(Controller) : FLogTurnSystem::Info("UTurnSubsystem::AddController OnControllerAdded.IsBound is false");
 }
 
 void UTurnSubsystem::RemoveController(AController* Controller)
 {
 	Controllers.RemoveSingle(Controller);
-	OnControllerRemoved.Broadcast(Controller);
+	OnControllerRemoved.IsBound() ? OnControllerRemoved.Broadcast(Controller) : FLogTurnSystem::Info("UTurnSubsystem::RemoveController OnControllerRemoved.IsBound is false");
 }
 
 void UTurnSubsystem::RemoveDestroyedControllers()
 {
 	Controllers.Remove(nullptr);
-	OnControllerRemoved.Broadcast(nullptr);
+	OnControllerRemoved.IsBound() ? OnControllerRemoved.Broadcast(nullptr) : FLogTurnSystem::Info("UTurnSubsystem::RemoveDestroyedControllers OnControllerRemoved.IsBound is false");
 }
 
 void UTurnSubsystem::ClearControllers()
@@ -59,13 +59,13 @@ void UTurnSubsystem::ClearControllers()
 void UTurnSubsystem::StartTurn()
 {
 	ITurn::Execute_TurnStarted(Controllers[Index]);
-	OnTurnStarted.Broadcast(Controllers[Index]);
+	OnTurnStarted.IsBound() ? OnTurnStarted.Broadcast(Controllers[Index]) : FLogTurnSystem::Info("UTurnSubsystem::StartTurn OnTurnStarted.IsBound is false");
 }
 
 void UTurnSubsystem::FinishTurn()
 {
 	ITurn::Execute_TurnEnded(Controllers[Index]);
-	OnTurnFinished.Broadcast(Controllers[Index]);
+	OnTurnFinished.IsBound() ? OnTurnFinished.Broadcast(Controllers[Index]) : FLogTurnSystem::Info("UTurnSubsystem::FinishTurn OnTurnFinished.IsBound is false");
 
 	Index++;
 	if (Index >= Controllers.Num())
