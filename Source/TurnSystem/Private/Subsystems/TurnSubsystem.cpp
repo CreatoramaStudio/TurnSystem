@@ -14,12 +14,12 @@ void UTurnSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UTurnSubsystem::Deinitialize()
 {
-	ClearControllers();
+	ClearPawns();
 }
 
-TArray<AController*> UTurnSubsystem::GetControllers() const
+TArray<APawn*> UTurnSubsystem::GetPawns() const
 {
-	return Controllers;
+	return Pawns;
 }
 
 int32 UTurnSubsystem::GetIndex() const
@@ -27,48 +27,53 @@ int32 UTurnSubsystem::GetIndex() const
 	return Index;
 }
 
-AController* UTurnSubsystem::GetActiveController()
+APawn* UTurnSubsystem::GetActivePawn()
 {
-	return  Controllers[Index];
+	return  Pawns[Index];
 }
 
-void UTurnSubsystem::AddController(AController* Controller)
+void UTurnSubsystem::AddPawn(APawn* Pawn)
 {
-	Controllers.Add(Controller);
-	OnControllerAdded.IsBound() ? OnControllerAdded.Broadcast(Controller) : FLogTurnSystem::Info("UTurnSubsystem::AddController OnControllerAdded.IsBound is false");
+	Pawns.Add(Pawn);
+	OnPawnAdded.IsBound() ? OnPawnAdded.Broadcast(Pawn) : FLogTurnSystem::Info("UTurnSubsystem::AddPawn OnPawnAdded.IsBound is false");
 }
 
-void UTurnSubsystem::RemoveController(AController* Controller)
+void UTurnSubsystem::RemovePawn(APawn* Pawn)
 {
-	Controllers.RemoveSingle(Controller);
-	OnControllerRemoved.IsBound() ? OnControllerRemoved.Broadcast(Controller) : FLogTurnSystem::Info("UTurnSubsystem::RemoveController OnControllerRemoved.IsBound is false");
+	Pawns.RemoveSingle(Pawn);
+	OnPawnRemoved.IsBound() ? OnPawnRemoved.Broadcast(Pawn) : FLogTurnSystem::Info("UTurnSubsystem::RemovePawn OnPawnRemoved.IsBound is false");
 }
 
-void UTurnSubsystem::RemoveDestroyedControllers()
+void UTurnSubsystem::RemoveDestroyedPawns()
 {
-	Controllers.Remove(nullptr);
-	OnControllerRemoved.IsBound() ? OnControllerRemoved.Broadcast(nullptr) : FLogTurnSystem::Info("UTurnSubsystem::RemoveDestroyedControllers OnControllerRemoved.IsBound is false");
+	Pawns.Remove(nullptr);
+	OnPawnRemoved.IsBound() ? OnPawnRemoved.Broadcast(nullptr) : FLogTurnSystem::Info("UTurnSubsystem::RemoveDestroyedPawns OnPawnRemoved.IsBound is false");
 }
 
-void UTurnSubsystem::ClearControllers()
+bool UTurnSubsystem::ContainsPawn(APawn* Pawn) const
+{
+	return Pawns.Contains(Pawn);
+}
+
+void UTurnSubsystem::ClearPawns()
 {
 	Index = 0;
-	Controllers.Empty();
+	Pawns.Empty();
 }
 
 void UTurnSubsystem::StartTurn()
 {
-	ITurn::Execute_TurnStarted(Controllers[Index]);
-	OnTurnStarted.IsBound() ? OnTurnStarted.Broadcast(Controllers[Index]) : FLogTurnSystem::Info("UTurnSubsystem::StartTurn OnTurnStarted.IsBound is false");
+	ITurn::Execute_TurnStarted(Pawns[Index]);
+	OnTurnStarted.IsBound() ? OnTurnStarted.Broadcast(Pawns[Index]) : FLogTurnSystem::Info("UTurnSubsystem::StartTurn OnTurnStarted.IsBound is false");
 }
 
 void UTurnSubsystem::FinishTurn()
 {
-	ITurn::Execute_TurnEnded(Controllers[Index]);
-	OnTurnFinished.IsBound() ? OnTurnFinished.Broadcast(Controllers[Index]) : FLogTurnSystem::Info("UTurnSubsystem::FinishTurn OnTurnFinished.IsBound is false");
+	ITurn::Execute_TurnEnded(Pawns[Index]);
+	OnTurnFinished.IsBound() ? OnTurnFinished.Broadcast(Pawns[Index]) : FLogTurnSystem::Info("UTurnSubsystem::FinishTurn OnTurnFinished.IsBound is false");
 
 	Index++;
-	if (Index >= Controllers.Num())
+	if (Index >= Pawns.Num())
 	{
 		Index = 0;
 	}

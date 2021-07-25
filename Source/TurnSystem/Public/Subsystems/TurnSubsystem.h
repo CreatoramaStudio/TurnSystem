@@ -6,7 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "TurnSubsystem.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnUpdate,AController*,Controller);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnUpdate,APawn*,Pawn);
 /**
  * 
  */
@@ -24,15 +24,15 @@ class TURNSYSTEM_API UTurnSubsystem : public UWorldSubsystem
 	FTurnUpdate OnTurnFinished;
 
 	UPROPERTY(BlueprintAssignable, Category = "Turn System")
-	FTurnUpdate OnControllerAdded;
+	FTurnUpdate OnPawnAdded;
 
 	UPROPERTY(BlueprintAssignable, Category = "Turn System")
-	FTurnUpdate OnControllerRemoved;
+	FTurnUpdate OnPawnRemoved;
 
 	protected:
 
 	UPROPERTY()
-	TArray<AController*> Controllers;
+	TArray<APawn*> Pawns;
 
 	int32 Index;
 
@@ -46,26 +46,29 @@ class TURNSYSTEM_API UTurnSubsystem : public UWorldSubsystem
 
 	virtual void Deinitialize() override;
 
-	UFUNCTION(BlueprintCallable,Category = "Turn System")
-	TArray<AController*> GetControllers() const;
+	UFUNCTION(BlueprintPure,Category = "Turn System")
+	TArray<APawn*> GetPawns() const;
 
-	UFUNCTION(BlueprintCallable,Category = "Turn System")
+	UFUNCTION(BlueprintPure,Category = "Turn System")
 	int32 GetIndex() const;
 
-	UFUNCTION(BlueprintCallable,Category = "Turn System")
-	AController* GetActiveController();
+	UFUNCTION(BlueprintPure,Category = "Turn System")
+	APawn* GetActivePawn();
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
-	void AddController(AController* Controller);
+	void AddPawn(APawn* Pawn);
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
-	void RemoveController(AController* Controller);
+	void RemovePawn(APawn* Pawn);
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
-	void RemoveDestroyedControllers();
+	void RemoveDestroyedPawns();
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
-	void ClearControllers();
+	bool ContainsPawn(APawn* Pawn) const;
+
+	UFUNCTION(BlueprintCallable,Category = "Turn System")
+	void ClearPawns();
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
 	void StartTurn();
