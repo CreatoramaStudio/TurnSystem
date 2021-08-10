@@ -62,9 +62,6 @@ class TURNSYSTEM_API UTurnSubsystem : public UWorldSubsystem
 	void RemovePawn(APawn* Pawn);
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
-	void RemoveDestroyedPawns();
-
-	UFUNCTION(BlueprintCallable,Category = "Turn System")
 	bool ContainsPawn(APawn* Pawn) const;
 
 	UFUNCTION(BlueprintCallable,Category = "Turn System")
@@ -77,6 +74,9 @@ class TURNSYSTEM_API UTurnSubsystem : public UWorldSubsystem
 	void FinishTurn();
 
 	protected:
+
+	UFUNCTION()
+	void RemoveDestroyedPawns(AActor* Actor);
 
 	private:
 };

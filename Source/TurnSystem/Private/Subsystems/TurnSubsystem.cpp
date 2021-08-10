@@ -34,20 +34,24 @@ APawn* UTurnSubsystem::GetActivePawn()
 
 void UTurnSubsystem::AddPawn(APawn* Pawn)
 {
+	Pawn->OnDestroyed.AddDynamic(this,&UTurnSubsystem::RemoveDestroyedPawns);
 	Pawns.Add(Pawn);
 	OnPawnAdded.IsBound() ? OnPawnAdded.Broadcast(Pawn) : FLogTurnSystem::Info("UTurnSubsystem::AddPawn OnPawnAdded.IsBound is false");
 }
 
 void UTurnSubsystem::RemovePawn(APawn* Pawn)
 {
-	Pawns.RemoveSingle(Pawn);
+	Pawn->OnDestroyed.RemoveDynamic(this,&UTurnSubsystem::RemoveDestroyedPawns);
+	Pawns.Remove(Pawn);
 	OnPawnRemoved.IsBound() ? OnPawnRemoved.Broadcast(Pawn) : FLogTurnSystem::Info("UTurnSubsystem::RemovePawn OnPawnRemoved.IsBound is false");
 }
 
-void UTurnSubsystem::RemoveDestroyedPawns()
+void UTurnSubsystem::RemoveDestroyedPawns(AActor* Actor)
 {
-	Pawns.Remove(nullptr);
-	OnPawnRemoved.IsBound() ? OnPawnRemoved.Broadcast(nullptr) : FLogTurnSystem::Info("UTurnSubsystem::RemoveDestroyedPawns OnPawnRemoved.IsBound is false");
+	if (APawn* Pawn = Cast<APawn>(Actor))
+	{
+		RemovePawn(Pawn);
+	}	
 }
 
 bool UTurnSubsystem::ContainsPawn(APawn* Pawn) const
