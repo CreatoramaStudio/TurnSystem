@@ -67,20 +67,24 @@ void UTurnSubsystem::ClearPawns()
 
 void UTurnSubsystem::StartTurn()
 {
-	ITurn::Execute_TurnStarted(Pawns[Index]);
-	OnTurnStarted.IsBound() ? OnTurnStarted.Broadcast(Pawns[Index]) : FLogTurnSystem::Info("UTurnSubsystem::StartTurn OnTurnStarted.IsBound is false");
+	if (Pawns.IsValidIndex(Index))
+	{
+		ITurn::Execute_TurnStarted(Pawns[Index]);
+		OnTurnStarted.IsBound() ? OnTurnStarted.Broadcast(Pawns[Index]) : FLogTurnSystem::Info("UTurnSubsystem::StartTurn OnTurnStarted.IsBound is false");
+	}
 }
 
 void UTurnSubsystem::FinishTurn()
 {
-	ITurn::Execute_TurnEnded(Pawns[Index]);
-	OnTurnFinished.IsBound() ? OnTurnFinished.Broadcast(Pawns[Index]) : FLogTurnSystem::Info("UTurnSubsystem::FinishTurn OnTurnFinished.IsBound is false");
-
-	Index++;
-	if (Index >= Pawns.Num())
+	if (Pawns.IsValidIndex(Index))
 	{
-		Index = 0;
-	}
+		ITurn::Execute_TurnEnded(Pawns[Index]);
+		OnTurnFinished.IsBound() ? OnTurnFinished.Broadcast(Pawns[Index]) : FLogTurnSystem::Info("UTurnSubsystem::FinishTurn OnTurnFinished.IsBound is false");
 
-	StartTurn();
+		Index++;
+		if (Index >= Pawns.Num())
+		{
+			Index = 0;
+		}
+	}
 }
